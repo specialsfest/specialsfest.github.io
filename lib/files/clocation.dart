@@ -362,7 +362,6 @@ class _CurrentLocation extends State<CurrentLocation> {
                     setState(() {
                       bLocation = false;
                       isLocationEnabled = true;
-                      //initPlatformState();
                       bStore = false;
                     });
                   },
@@ -380,10 +379,11 @@ class _CurrentLocation extends State<CurrentLocation> {
     );
   }
 
-  Widget Wys(String sDay, List<dynamic> lDay, String dateDay, double lat, double lng) {
+
+  Widget ListDae(String sDay, List<dynamic> lDay, String dateDay) {
     return FutureBuilder(
-            future: getMethod(_distanceValue, sDay, typeFood, lat,
-                lng, lDay, dateDay, sDistanceOrder),
+            future: getMethod(_distanceValue, sDay, typeFood, -26.71667,
+                27.0970, lDay, dateDay, sDistanceOrder),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               List snap = snapshot.data;
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -426,7 +426,6 @@ class _CurrentLocation extends State<CurrentLocation> {
                   );
                 }
                 if (snap.length != 0) {
-                  print('Nice');
                   return ListView.builder(
                       itemCount: snap.length,
                       itemBuilder: (context, index) {
@@ -457,54 +456,6 @@ class _CurrentLocation extends State<CurrentLocation> {
               },
             );
   }
-
-  Widget ListDae(String sDay, List<dynamic> lDay, String dateDay) {
-     if(!bLocation)   {
-       return Center(
-          child: Column(
-            children: <Widget>[
-              Text(
-               'Choose a city:',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontWeight: FontWeight.w900,
-                  fontStyle: FontStyle.italic,
-                  fontFamily: 'Open Sans',
-                  fontSize: 20),
-                ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: EdgeInsets.all(12),
-                  color: Colors.lightBlueAccent,
-                  child: Text('Potchefstroom',
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                  textColor: Colors.white,
-                  elevation: 7.0,
-                  onPressed: () {
-                    Wys(sDay, lDay, dateDay, -26.7145, 27.0970);
-                    bLocation = true;
-                  },
-                 ),
-              ],
-            )
-         );
-        }
-        
-          /*Text(
-            'Getting location...',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.grey[800],
-                fontWeight: FontWeight.w900,
-                fontStyle: FontStyle.italic,
-                fontFamily: 'Open Sans',
-                fontSize: 20),
-          ),*/
-        
-    }
 }
 
   

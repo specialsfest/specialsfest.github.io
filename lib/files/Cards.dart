@@ -39,7 +39,9 @@ class CardsDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    var media =MediaQuery.of(context).size;
+    return Center(
+      child: Container(
       height: dSiz + 20,
       child: Stack(
         alignment: Alignment.center,
@@ -182,7 +184,9 @@ class CardsDisplay extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
+    
   }
 }
 
