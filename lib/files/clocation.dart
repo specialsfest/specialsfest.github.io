@@ -63,6 +63,7 @@ class _CurrentLocation extends State<CurrentLocation> {
           'http://specials-fest.com/PHP/getData.php?days=$sDay&distance=$iDistance&latitude=$lat&longitude=$long&type=$sType&datestring=$dateDay&distanceorder=$sDistaceOrder';
       var res = await http
           .get(Uri.encodeFull(theUrl), headers: {"Accept": "application/json"});
+          print(res.body);
       List<dynamic> responsBody = json.decode(res.body);
 
       switch (sDay) {
@@ -395,12 +396,13 @@ class _CurrentLocation extends State<CurrentLocation> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        SizedBox(height: 50),
                         Text(
                           "Error fetching Data \n Please check your connection",
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 50,
                         ),
                         Container(
                           child: RawMaterialButton(
@@ -482,7 +484,7 @@ class _CurrentLocation extends State<CurrentLocation> {
                   textColor: Colors.white,
                   elevation: 7.0,
                   onPressed: () {
-                    Wys(sDay, lDay, dateDay, 26.7145, 27.0970);
+                    Wys(sDay, lDay, dateDay, -26.7145, 27.0970);
                     bLocation = true;
                   },
                  ),
