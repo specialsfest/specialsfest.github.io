@@ -10,6 +10,7 @@ import 'globalvariables.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Cards.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 
 List<dynamic> lMonday,
     lTuesday,
@@ -429,17 +430,25 @@ class _CurrentLocation extends State<CurrentLocation> {
                   return ListView.builder(
                       itemCount: snap.length,
                       itemBuilder: (context, index) {
-                        return CardsDisplay(
-                          sImageURL: "${snap[index]['imageurl']}",
-                          sSpecialName: "${snap[index]['specialname']}",
-                          sBusiness: "${snap[index]['businessname']}",
-                          sDistance: "${snap[index]['distance']}",
-                          sSpecialDescription: "${snap[index]['specialdescription']}",
-                          sPhoneNumber: '${snap[index]['phonenumber']}',
-                          sLatitude: '${snap[index]['latitude']}',
-                          sLongitude: '${snap[index]['longitude']}',
-                          bNetworkImage: true,
-                          bShowLocation: true,
+                        return ResponsiveGridRow(
+                          children: [
+                            ResponsiveGridCol(
+                              xs: 6,
+                              md: 3,
+                              child: CardsDisplay(
+                                sImageURL: "${snap[index]['imageurl']}",
+                                sSpecialName: "${snap[index]['specialname']}",
+                                sBusiness: "${snap[index]['businessname']}",
+                                sDistance: "${snap[index]['distance']}",
+                                sSpecialDescription: "${snap[index]['specialdescription']}",
+                                sPhoneNumber: '${snap[index]['phonenumber']}',
+                                sLatitude: '${snap[index]['latitude']}',
+                                sLongitude: '${snap[index]['longitude']}',
+                                bNetworkImage: true,
+                                bShowLocation: true,
+                              ),
+                            ),
+                          ]
                         );
                       },
                     );
