@@ -10,7 +10,6 @@ import 'globalvariables.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Cards.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 
 List<dynamic> lMonday,
     lTuesday,
@@ -166,7 +165,6 @@ class _CurrentLocation extends State<CurrentLocation> {
     /*initPlatformState() async {
     await _locationService.changeSettings(
         accuracy: LocationAccuracy.HIGH, interval: 1000);
-    print("Fookit");
     LocationData location;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -428,30 +426,25 @@ class _CurrentLocation extends State<CurrentLocation> {
                 }
                 if (snap.length != 0) {
                   return ListView.builder(
-                      itemCount: snap.length,
-                      itemBuilder: (context, index) {
-                        return ResponsiveGridRow(
-                          children: [
-                            ResponsiveGridCol(
-                              xs: 6,
-                              md: 3,
-                              child: CardsDisplay(
-                                sImageURL: "${snap[index]['imageurl']}",
-                                sSpecialName: "${snap[index]['specialname']}",
-                                sBusiness: "${snap[index]['businessname']}",
-                                sDistance: "${snap[index]['distance']}",
-                                sSpecialDescription: "${snap[index]['specialdescription']}",
-                                sPhoneNumber: '${snap[index]['phonenumber']}',
-                                sLatitude: '${snap[index]['latitude']}',
-                                sLongitude: '${snap[index]['longitude']}',
-                                bNetworkImage: true,
-                                bShowLocation: true,
-                              ),
+                          itemCount: snap.length,
+                          itemBuilder: (context, index) {
+                          return Center(
+                            child: CardsDisplay(
+                              sImageURL: "${snap[index]['imageurl']}",
+                              sSpecialName: "${snap[index]['specialname']}",
+                              sBusiness: "${snap[index]['businessname']}",
+                              sDistance: "${snap[index]['distance']}",
+                              sSpecialDescription: "${snap[index]['specialdescription']}",
+                              sPhoneNumber: '${snap[index]['phonenumber']}',
+                              sLatitude: '${snap[index]['latitude']}',
+                              sLongitude: '${snap[index]['longitude']}',
+                              bNetworkImage: true,
+                              bShowLocation: true,
                             ),
-                          ]
-                        );
+                          );
                       },
                     );
+               
           } else {
             return Center(
               child: Text(

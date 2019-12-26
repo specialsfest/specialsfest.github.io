@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 //import 'statmonitor.dart';
 import 'signup.dart';
-//import 'forgotpassword_enter_email.dart';
+import 'forgotpassword_enter_email.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -134,8 +134,8 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(color: Colors.black54),
                 ),
                 onPressed: () {
-                  /*Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) => new ForgotPasswordEnterEmail()));*/
+                  Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) => new ForgotPasswordEnterEmail()));
                 },
               ),
             ],

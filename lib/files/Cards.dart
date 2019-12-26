@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flip_card/flip_card.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 
 class CardsDisplay extends StatelessWidget {
   final String sImageURL;
@@ -42,7 +41,51 @@ class CardsDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     var media =MediaQuery.of(context).size;
     return Center(
-      child: Container(
+      child: Container(width: 450,
+        child: Card(
+          shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          elevation: 10,
+          child: Column(
+            children: <Widget>[
+                Image.network(this.sImageURL, fit: BoxFit.fill,height: 200,width:600),
+                AutoSizeText(
+                  this.sSpecialName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
+                  maxLines: 4,
+                  textScaleFactor: 1.0,
+                ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                AutoSizeText(
+                  'By ' + this.sBusiness,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 10.0),
+                  maxLines: 3,
+                  textScaleFactor: 1.0,
+                ),
+                AutoSizeText(
+                  this.sSpecialDescription,
+                  textAlign: TextAlign.center,
+                  style:
+                    TextStyle(color: Colors.black, fontSize: 18.0),
+                  maxLines: 6,
+                  textScaleFactor: 1.0,
+                ),
+              ],
+              ),
+          ),
+      )
+     
+     
+     
+     
+     /* child: Container(
       height: dSiz + 20,
       child: Stack(
         alignment: Alignment.center,
@@ -186,7 +229,7 @@ class CardsDisplay extends StatelessWidget {
           ),
         ],
       ),
-    ),
+    ),*/
     );
       
     
