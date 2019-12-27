@@ -41,7 +41,7 @@ class CardsDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     var media =MediaQuery.of(context).size;
     return Center(
-      child: Container(width: 450,
+      /*child: Container(width: 450,
         child: Card(
           shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(15.0))),
@@ -80,12 +80,13 @@ class CardsDisplay extends StatelessWidget {
               ],
               ),
           ),
-      )
+      )*/
      
      
      
      
-     /* child: Container(
+      child: Container(
+        width: dSiz*2.1,
       height: dSiz + 20,
       child: Stack(
         alignment: Alignment.center,
@@ -229,7 +230,7 @@ class CardsDisplay extends StatelessWidget {
           ),
         ],
       ),
-    ),*/
+    ),
     );
       
     

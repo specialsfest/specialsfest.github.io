@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:specialsweb/files/statmonitor.dart';
 //import 'statmonitor.dart';
 import 'signup.dart';
 import 'forgotpassword_enter_email.dart';
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       bLoginPressed = false;
       bError = false;
-      /*Navigator.push(
+      Navigator.push(
           context,
           new MaterialPageRoute(
               builder: (context) => new StatMonitor(
@@ -185,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     sSpecialCount: datauser[0]['specialcount'],
                     iValidUntil: datauser[0]['valid_until'],
                     iLimit: datauser[0]['specialcountlimit']
-                  )));*/
+                  )));
       _contPass.clear();
     }
   }

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_fluid_slider/flutter_fluid_slider.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart';
 import 'getCityFunction.dart';
 import 'globalvariables.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Cards.dart';
+import 'package:universal_html/prefer_universal/html.dart' as html;
 
 List<dynamic> lMonday,
     lTuesday,
@@ -28,7 +29,8 @@ List<dynamic> lMondayTemp = List(),
     lSundayTemp = List();
 
 double screen_width;
-LocationData currentPos = null;
+num dAccuracy = 0;
+var currentPos = [0.0, 0.0];
 bool bStore = false;
 bool bInitial = false;
 bool isLocationEnabled = true;
@@ -53,7 +55,7 @@ class _CurrentLocation extends State<CurrentLocation> {
   int _distanceValue = 20;
   String sDistanceOrder = 'ASC';
   String displayDistanceOrder = "Ascending";
-  Location _locationService = new Location();
+  // Location _locationService = new Location();
   String error;
 
   getMethod(int iDistance, String sDay, String sType, double lat, double long,
@@ -63,7 +65,7 @@ class _CurrentLocation extends State<CurrentLocation> {
           'http://specials-fest.com/PHP/getData.php?days=$sDay&distance=$iDistance&latitude=$lat&longitude=$long&type=$sType&datestring=$dateDay&distanceorder=$sDistaceOrder';
       var res = await http
           .get(Uri.encodeFull(theUrl), headers: {"Accept": "application/json"});
-          print(res.body);
+      print(res.body);
       List<dynamic> responsBody = json.decode(res.body);
 
       switch (sDay) {
@@ -153,59 +155,44 @@ class _CurrentLocation extends State<CurrentLocation> {
       _iDayNow++;
     }
 
-    /*if (currentPos == null) {
-      print('get Current location');
+    if ((currentPos[0] == 0.0) && (currentPos[0] == 0.0)) {
       initPlatformState();
     } else {
-      bLocation = true;
-    }*/
-
+      setState(() {
+        bLocation = true;
+      });
+    }
   }
 
-    /*initPlatformState() async {
-    await _locationService.changeSettings(
-        accuracy: LocationAccuracy.HIGH, interval: 1000);
-    LocationData location;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      bool serviceStatus = await _locationService.serviceEnabled();
-      print("Service status: $serviceStatus");
-      if (serviceStatus) {
-        _permission = await _locationService.requestPermission();
-        print("Permission: $_permission");
-        if (_permission) {
-          location = await _locationService.getLocation();
-          setState(() {
-            if (!bInitial) {
-              getCityofUser(location.latitude, location.longitude);
-              bInitial = true;
-            }
-            currentPos = location;
-            globals.globalPosition = location;
-            bLocation = true;
-          });
-        }
-      } else {
-        bool serviceStatusResult = await _locationService.requestService();
-        print("Service status activated after request: $serviceStatusResult");
-        if (serviceStatusResult) {
-          initPlatformState();
-        } else {
-          setState(() {
-            isLocationEnabled = false;
-          });
-        }
+  initPlatformState() async {
+    bool locEnabled = false;
+    html.window.navigator.geolocation
+        .getCurrentPosition(
+            enableHighAccuracy: true,
+            timeout: Duration(seconds: 5),
+            maximumAge: Duration(seconds: 0))
+        .then((e) {
+      locEnabled = true;
+      setState(() {
+        // if (!bInitial) {
+        //   getCityofUser(e.coords.latitude, e.coords.longitude);
+        //   bInitial = true;
+        // }
+
+        dAccuracy = e.coords.accuracy;
+        currentPos[0] = e.coords.latitude;
+        currentPos[1] = e.coords.longitude;
+        // globals.globalPosition = e.coords as LocationData;
+        bLocation = true;
+      });
+    }).whenComplete(() {
+      if (!locEnabled) {
+        setState(() {
+          isLocationEnabled = false;
+        });
       }
-    } on PlatformException catch (e) {
-      print(e);
-      if (e.code == 'PERMISSION_DENIED') {
-        error = e.message;
-      } else if (e.code == 'SERVICE_STATUS_ERROR') {
-        error = e.message;
-      }
-      location = null;
-    }
-  }*/
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,12 +204,12 @@ class _CurrentLocation extends State<CurrentLocation> {
       child: Scaffold(
         appBar: AppBar(
           actions: <Widget>[
-            /*IconButton(
+            IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
                 showSearch(context: context, delegate: SearchSpecials());
               },
-            )*/
+            )
           ],
           backgroundColor: Colors.indigo,
           centerTitle: true,
@@ -362,6 +349,7 @@ class _CurrentLocation extends State<CurrentLocation> {
                       bLocation = false;
                       isLocationEnabled = true;
                       bStore = false;
+                      initPlatformState();
                     });
                   },
                   color: Colors.blueAccent,
@@ -378,91 +366,165 @@ class _CurrentLocation extends State<CurrentLocation> {
     );
   }
 
-
   Widget ListDae(String sDay, List<dynamic> lDay, String dateDay) {
-    return FutureBuilder(
-            future: getMethod(_distanceValue, sDay, typeFood, -26.71667,
-                27.0970, lDay, dateDay, sDistanceOrder),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              List snap = snapshot.data;
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: 50),
-                        Text(
-                          "Error fetching Data \n Please check your connection",
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        Container(
-                          child: RawMaterialButton(
-                            shape: CircleBorder(),
-                            fillColor: Colors.blueAccent,
-                            child: Icon(
-                              Icons.refresh,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              if (this.mounted) {
-                                setState(() {});
-                              }
-                            },
-                          ),
-                          width: 50,
-                          height: 50,
-                        )
-                      ],
-                    ),
-                  );
-                }
-                if (snap.length != 0) {
-                  return ListView.builder(
-                          itemCount: snap.length,
-                          itemBuilder: (context, index) {
-                          return Center(
-                            child: CardsDisplay(
-                              sImageURL: "${snap[index]['imageurl']}",
-                              sSpecialName: "${snap[index]['specialname']}",
-                              sBusiness: "${snap[index]['businessname']}",
-                              sDistance: "${snap[index]['distance']}",
-                              sSpecialDescription: "${snap[index]['specialdescription']}",
-                              sPhoneNumber: '${snap[index]['phonenumber']}',
-                              sLatitude: '${snap[index]['latitude']}',
-                              sLongitude: '${snap[index]['longitude']}',
-                              bNetworkImage: true,
-                              bShowLocation: true,
-                            ),
-                          );
-                      },
-                    );
-               
-          } else {
-            return Center(
+    if (!bLocation) {
+      //Die load aan die begin waar sy value true is
+      if (!isLocationEnabled) {
+        return Center(
+            child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
-                "Sorry no specials for this day \n Check filter distance",
+                'Please ENABLE your location to display specials',
                 textAlign: TextAlign.center,
-                textScaleFactor: 1.0,
+                style: TextStyle(
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.w900,
+                    fontStyle: FontStyle.italic,
+                    fontFamily: 'Open Sans',
+                    fontSize: 20),
+              ),
+            ),
+            RaisedButton(
+              onPressed: () {
+                html.window.location.reload();
+              },
+              color: Colors.blueAccent,
+              child: Text(
+                'Enable Location',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ));
+      } else {
+        return Center(
+          child: Text(
+            'Getting location...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.grey[800],
+                fontWeight: FontWeight.w900,
+                fontStyle: FontStyle.italic,
+                fontFamily: 'Open Sans',
+                fontSize: 20),
+          ),
+        );
+      }
+    } else {
+      return FutureBuilder(
+        future: getMethod(_distanceValue, sDay, typeFood, currentPos[0],
+            currentPos[1], lDay, dateDay, sDistanceOrder),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          List snap = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Text(
+                    "Error fetching Data \n Please check your connection",
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Container(
+                    child: RawMaterialButton(
+                      shape: CircleBorder(),
+                      fillColor: Colors.blueAccent,
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        if (this.mounted) {
+                          setState(() {});
+                        }
+                      },
+                    ),
+                    width: 50,
+                    height: 50,
+                  )
+                ],
               ),
             );
           }
-        
+          if (snap.length != 0) {
+            return ListView.builder(
+              itemCount: snap.length,
+              itemBuilder: (context, index) {
+                return Center(
+                  child: CardsDisplay(
+                    sImageURL: "${snap[index]['imageurl']}",
+                    sSpecialName: "${snap[index]['specialname']}",
+                    sBusiness: "${snap[index]['businessname']}",
+                    sDistance: "${snap[index]['distance']}",
+                    sSpecialDescription: "${snap[index]['specialdescription']}",
+                    sPhoneNumber: '${snap[index]['phonenumber']}',
+                    sLatitude: '${snap[index]['latitude']}',
+                    sLongitude: '${snap[index]['longitude']}',
+                    bNetworkImage: true,
+                    bShowLocation: true,
+                  ),
+                );
               },
             );
+          } else {
+            if (dAccuracy > 100) {
+              return Center(
+                  child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                    child: Text(
+                      'You have poor accuracy \n device probably does not have GPS \n Please search for town/city that you are located',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w900,
+                          fontStyle: FontStyle.italic,
+                          fontFamily: 'Open Sans',
+                          fontSize: 20),
+                    ),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      html.window.location.reload();
+                    },
+                    color: Colors.blueAccent,
+                    child: Text(
+                      'Enable Location',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              ));
+            } else {
+              return Center(
+                child: Text(
+                  "Sorry no specials for this day \n Check filter distance",
+                  textAlign: TextAlign.center,
+                  textScaleFactor: 1.0,
+                ),
+              );
+            }
+          }
+        },
+      );
+    }
   }
-}
 
-  
-
-  /*void SearchPlacePressed(String sPlace) {
+  void SearchPlacePressed(String sPlace) {
     if (sPlace == 'All Places') {
       if (lMondayTemp.length != 0 ||
           lTuesdayTemp.length != 0 ||
@@ -566,21 +628,10 @@ class _CurrentLocation extends State<CurrentLocation> {
         iTeller++;
       });
     }
-    print(sPlace);
-  }
-
-  Future<Null> pullRefresh() async {
-    /*setState(() {
-      bStore = false;
-    });*/
-    await Future.delayed(Duration(seconds: 2));
-    return null;
-  }
-  
   }
 }
 
-/*class SearchSpecials extends SearchDelegate<String> {
+class SearchSpecials extends SearchDelegate<String> {
   final recentSpecialSearch = _SpecialPlaces;
 
   @override
@@ -646,4 +697,4 @@ class _CurrentLocation extends State<CurrentLocation> {
       itemCount: suggestionList.length,
     );
   }
-}*/*/
+}
