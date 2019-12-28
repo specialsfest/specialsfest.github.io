@@ -86,6 +86,7 @@ class CardsDisplay extends StatelessWidget {
      
      
       child: Container(
+        // color: Colors.brown,
         width: dSiz*2.1,
       height: dSiz + 20,
       child: Stack(

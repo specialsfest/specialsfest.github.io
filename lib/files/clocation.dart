@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Cards.dart';
 import 'package:universal_html/prefer_universal/html.dart' as html;
+import 'package:responsive_builder/responsive_builder.dart';
 
 List<dynamic> lMonday,
     lTuesday,
@@ -153,8 +154,8 @@ class _CurrentLocation extends State<CurrentLocation> {
       _iDayNow++;
     }
 
-    currentPos[0] = -26.71667;
-    currentPos[1] = 27.1;
+    // currentPos[0] = -26.71667;
+    // currentPos[1] = 27.1;
 
     if ((currentPos[0] == 0.0) && (currentPos[0] == 0.0)) {
       initPlatformState();
@@ -464,25 +465,71 @@ class _CurrentLocation extends State<CurrentLocation> {
             );
           }
           if (snap.length != 0) {
-            return ListView.builder(
-              // gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-              itemCount: snap.length,
-              itemBuilder: (context, index) {
-                return Center(
-                  child: CardsDisplay(
-                    sImageURL: "${snap[index]['imageurl']}",
-                    sSpecialName: "${snap[index]['specialname']}",
-                    sBusiness: "${snap[index]['businessname']}",
-                    sDistance: "${snap[index]['distance']}",
-                    sSpecialDescription: "${snap[index]['specialdescription']}",
-                    sPhoneNumber: '${snap[index]['phonenumber']}',
-                    sLatitude: '${snap[index]['latitude']}',
-                    sLongitude: '${snap[index]['longitude']}',
-                    bNetworkImage: true,
-                    bShowLocation: true,
-                  ),
-                );
-              },
+            return ScreenTypeLayout(
+              mobile: ListView.builder(
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                    ),
+                  );
+                },
+              ),
+              tablet: GridView.builder(
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, childAspectRatio: 2),
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                    ),
+                  );
+                },
+              ),
+              desktop: GridView.builder(
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, childAspectRatio: 2),
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                    ),
+                  );
+                },
+              ),
             );
           } else {
             if (dAccuracy > 100) {
