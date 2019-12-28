@@ -11,13 +11,15 @@ import 'Cards.dart';
 import 'globalvariables.dart' as globals;
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
+import 'package:universal_html/prefer_universal/html.dart' as html;
 
 double screen_width;
 bool isLocationEnabled = true;
 bool _permission = false;
-LocationData currentPos = null;
+var currentPos = [0.0, 0.0];
 bool bInitial = false;
 bool bStore = false;
+num dAccuracy = 0;
 
 class StatMonitor extends StatefulWidget {
   final String sEmail;
@@ -69,11 +71,20 @@ class _StatMonitor extends State<StatMonitor> {
     super.initState();
     refreshCount();
 
-    if (currentPos == null) {
-      print('get Current location');
+    if (globals.globalAccuracy < 100)
+    {
+      currentPos[0] = globals.globalPosition[0];
+      currentPos[1] = globals.globalPosition[1];
+      dAccuracy = globals.globalAccuracy;
+    }
+    print('tits');
+
+    if ((currentPos[0] == 0.0) && (currentPos[0] == 0.0)) {
       initPlatformState();
     } else {
-      bLocation = true;
+      setState(() {
+        bLocation = true;
+      });
     }
   }
 
@@ -87,50 +98,34 @@ class _StatMonitor extends State<StatMonitor> {
 
   // Get user location
   initPlatformState() async {
-    await _locationService.changeSettings(
-        accuracy: LocationAccuracy.HIGH, interval: 1000);
+    bool locEnabled = false;
+    html.window.navigator.geolocation
+        .getCurrentPosition(
+            enableHighAccuracy: true,
+            timeout: Duration(seconds: 5),
+            maximumAge: Duration(seconds: 0))
+        .then((e) {
+      locEnabled = true;
+      setState(() {
+        dAccuracy = e.coords.accuracy;
+        currentPos[0] = e.coords.latitude;
+        currentPos[1] = e.coords.longitude;
+        globals.globalPosition[0] = e.coords.latitude;
+        globals.globalPosition[1] = e.coords.longitude;
+        bLocation = true;
 
-    LocationData location;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      bool serviceStatus = await _locationService.serviceEnabled();
-      print("Service status: $serviceStatus");
-      if (serviceStatus) {
-        _permission = await _locationService.requestPermission();
-        print("Permission: $_permission");
-        if (_permission) {
-          location = await _locationService.getLocation();
-          setState(() {
-            if (!bInitial) {
-              getCityofUser(location.latitude, location.longitude);
-              bInitial = true;
-            }
-            currentPos = location;
-            globals.globalPosition = location;
-            bLocation = true;
-          });
+        if (!bInitial && dAccuracy < 100) {
+          getCityofUser(e.coords.latitude, e.coords.longitude);
+          bInitial = true;
         }
-      } else {
-        bool serviceStatusResult = await _locationService.requestService();
-        print("Service status activated after request: $serviceStatusResult");
-        if (serviceStatusResult) {
-          initPlatformState();
-        } else {
-          setState(() {
-            isLocationEnabled = false;
-            print(isLocationEnabled);
-          });
-        }
+      });
+    }).whenComplete(() {
+      if (!locEnabled) {
+        setState(() {
+          isLocationEnabled = false;
+        });
       }
-    } on PlatformException catch (e) {
-      print(e);
-      if (e.code == 'PERMISSION_DENIED') {
-        error = e.message;
-      } else if (e.code == 'SERVICE_STATUS_ERROR') {
-        error = e.message;
-      }
-      location = null;
-    }
+    });
   }
 
   getMethod(String sConfig) async {
@@ -147,8 +142,8 @@ class _StatMonitor extends State<StatMonitor> {
     var result = await http
         .post("http://specials-fest.com/PHP/getUserSpecials.php", body: {
       "useremail": widget.sEmail,
-      "dCurrentLat": globals.globalPosition.latitude.toString(),
-      "dCurrentLong": globals.globalPosition.longitude.toString(),
+      "dCurrentLat": globals.globalPosition[0].toString(),
+      "dCurrentLong": globals.globalPosition[1].toString(),
     });
     List<dynamic> responsBody = json.decode(result.body);
     return responsBody;

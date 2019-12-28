@@ -34,7 +34,6 @@ var currentPos = [0.0, 0.0];
 bool bStore = false;
 bool bInitial = false;
 bool isLocationEnabled = true;
-bool _permission = false;
 
 List<String> _SpecialPlaces = List();
 
@@ -55,7 +54,6 @@ class _CurrentLocation extends State<CurrentLocation> {
   int _distanceValue = 20;
   String sDistanceOrder = 'ASC';
   String displayDistanceOrder = "Ascending";
-  // Location _locationService = new Location();
   String error;
 
   getMethod(int iDistance, String sDay, String sType, double lat, double long,
@@ -155,6 +153,9 @@ class _CurrentLocation extends State<CurrentLocation> {
       _iDayNow++;
     }
 
+    currentPos[0] = -26.71667;
+    currentPos[1] = 27.1;
+
     if ((currentPos[0] == 0.0) && (currentPos[0] == 0.0)) {
       initPlatformState();
     } else {
@@ -174,16 +175,18 @@ class _CurrentLocation extends State<CurrentLocation> {
         .then((e) {
       locEnabled = true;
       setState(() {
-        // if (!bInitial) {
-        //   getCityofUser(e.coords.latitude, e.coords.longitude);
-        //   bInitial = true;
-        // }
-
         dAccuracy = e.coords.accuracy;
+        globals.globalAccuracy = dAccuracy;
         currentPos[0] = e.coords.latitude;
         currentPos[1] = e.coords.longitude;
-        // globals.globalPosition = e.coords as LocationData;
+        globals.globalPosition[0] = e.coords.latitude;
+        globals.globalPosition[1] = e.coords.longitude;
         bLocation = true;
+
+        if (!bInitial && dAccuracy < 100) {
+          getCityofUser(e.coords.latitude, e.coords.longitude);
+          bInitial = true;
+        }
       });
     }).whenComplete(() {
       if (!locEnabled) {
@@ -392,7 +395,7 @@ class _CurrentLocation extends State<CurrentLocation> {
               },
               color: Colors.blueAccent,
               child: Text(
-                'Enable Location',
+                'Reload Window',
                 style: TextStyle(color: Colors.white),
               ),
             )
@@ -447,7 +450,9 @@ class _CurrentLocation extends State<CurrentLocation> {
                       ),
                       onPressed: () {
                         if (this.mounted) {
-                          setState(() {});
+                          setState(() {
+                            html.window.location.reload();
+                          });
                         }
                       },
                     ),
@@ -460,6 +465,7 @@ class _CurrentLocation extends State<CurrentLocation> {
           }
           if (snap.length != 0) {
             return ListView.builder(
+              // gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
               itemCount: snap.length,
               itemBuilder: (context, index) {
                 return Center(
