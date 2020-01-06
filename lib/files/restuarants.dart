@@ -376,7 +376,10 @@ class _RestaurantsState extends State<Restaurants> {
 
 // Here is our Form UI
   Widget formUI() {
-    return new Column(
+    return new Center(
+    child: Container(
+      constraints: BoxConstraints(minWidth: 100, maxWidth: 800),
+    child: Column(
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -707,6 +710,7 @@ class _RestaurantsState extends State<Restaurants> {
           ),
         ),
       ],
+    ))
     );
   }
 
