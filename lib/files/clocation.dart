@@ -56,6 +56,7 @@ class _CurrentLocation extends State<CurrentLocation> {
   String sDistanceOrder = 'ASC';
   String displayDistanceOrder = "Ascending";
   String error;
+  bool notAccurate = false;
 
   getMethod(int iDistance, String sDay, String sType, double lat, double long,
       List<dynamic> lDay, String dateDay, String sDistaceOrder) async {
@@ -482,13 +483,14 @@ class _CurrentLocation extends State<CurrentLocation> {
                       sLongitude: '${snap[index]['longitude']}',
                       bNetworkImage: true,
                       bShowLocation: true,
+                      iSize: 180,
                     ),
                   );
                 },
               ),
               tablet: GridView.builder(
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, childAspectRatio: 2),
+                    crossAxisCount: 2, childAspectRatio: 1),
                 itemCount: snap.length,
                 itemBuilder: (context, index) {
                   return Center(
@@ -504,13 +506,14 @@ class _CurrentLocation extends State<CurrentLocation> {
                       sLongitude: '${snap[index]['longitude']}',
                       bNetworkImage: true,
                       bShowLocation: true,
+                      iSize: 180,
                     ),
                   );
                 },
               ),
               desktop: GridView.builder(
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, childAspectRatio: 2),
+                    crossAxisCount: 3, childAspectRatio: 1.5),
                 itemCount: snap.length,
                 itemBuilder: (context, index) {
                   return Center(
@@ -526,6 +529,7 @@ class _CurrentLocation extends State<CurrentLocation> {
                       sLongitude: '${snap[index]['longitude']}',
                       bNetworkImage: true,
                       bShowLocation: true,
+                      iSize: 250,
                     ),
                   );
                 },
@@ -539,7 +543,7 @@ class _CurrentLocation extends State<CurrentLocation> {
                   Padding(
                     padding: EdgeInsets.only(left: 25.0, right: 25.0),
                     child: Text(
-                      'You have poor accuracy \n device probably does not have GPS \n Please search for town/city that you are located',
+                      'You have poor accuracy \n The device probably does not have GPS \n Please select a city',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.grey[800],
@@ -551,11 +555,15 @@ class _CurrentLocation extends State<CurrentLocation> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      html.window.location.reload();
+                      setState(() {
+                        currentPos[0] = -26.71667;
+                        currentPos[1] = 27.1;
+                      });
+                      print(currentPos[0]);
                     },
                     color: Colors.blueAccent,
                     child: Text(
-                      'Enable Location',
+                      'Potchefstroom',
                       style: TextStyle(color: Colors.white),
                     ),
                   )
