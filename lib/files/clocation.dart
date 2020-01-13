@@ -556,6 +556,7 @@ class _CurrentLocation extends State<CurrentLocation> {
                   RaisedButton(
                     onPressed: () {
                       setState(() {
+                        bStore = false;
                         currentPos[0] = -26.71667;
                         currentPos[1] = 27.1;
                       });

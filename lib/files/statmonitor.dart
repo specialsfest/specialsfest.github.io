@@ -5,13 +5,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
-import 'restuarants.dart';
+//import 'restuarants.dart';
 import 'getCityFunction.dart';
 import 'Cards.dart';
 import 'globalvariables.dart' as globals;
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:universal_html/prefer_universal/html.dart' as html;
+import 'package:responsive_builder/responsive_builder.dart';
 
 double screen_width;
 bool isLocationEnabled = true;
@@ -77,7 +78,6 @@ class _StatMonitor extends State<StatMonitor> {
       currentPos[1] = globals.globalPosition[1];
       dAccuracy = globals.globalAccuracy;
     }
-    print('tits');
 
     if ((currentPos[0] == 0.0) && (currentPos[0] == 0.0)) {
       initPlatformState();
@@ -200,13 +200,13 @@ class _StatMonitor extends State<StatMonitor> {
                 Expanded(child: StatMonitorBuilder('Month'))
               ],
             ),
-            Scaffold(
+            /*Scaffold(
               body: ListSpecialsUser(),
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.add),
                 backgroundColor: Colors.blueAccent,
                 onPressed: () {
-                  //*************************************************************************************************************************************
+                  //*************************************************************************************************************************************//
                   refreshCount();
                   Navigator.push(
                       context,
@@ -222,7 +222,7 @@ class _StatMonitor extends State<StatMonitor> {
                 },
                 tooltip: 'Add new Special',
               ),
-            )
+            )*/
           ],
         ),
       ),
@@ -430,22 +430,74 @@ class _StatMonitor extends State<StatMonitor> {
             );
           }
           if (snap.length != 0) {
-            return ListView.builder(
-              itemCount: snap.length,
-              itemBuilder: (context, index) {
-                return CardsDisplay(
-                  sImageURL: "${snap[index]['imageurl']}",
-                  sSpecialName: "${snap[index]['specialname']}",
-                  sBusiness: widget.sBusinessName,
-                  sDistance: "${snap[index]['distance']}",
-                  sSpecialDescription: "${snap[index]['specialdescription']}",
-                  sPhoneNumber: '${snap[index]['phonenumber']}',
-                  sLatitude: '${snap[index]['latitude']}',
-                  sLongitude: '${snap[index]['longitude']}',
-                  bNetworkImage: true,
-                  bShowLocation: true,
-                );
-              },
+            return ScreenTypeLayout(
+              mobile: ListView.builder(
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                      iSize: 180,
+                    ),
+                  );
+                },
+              ),
+              tablet: GridView.builder(
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, childAspectRatio: 1),
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                      iSize: 180,
+                    ),
+                  );
+                },
+              ),
+              desktop: GridView.builder(
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, childAspectRatio: 1.5),
+                itemCount: snap.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CardsDisplay(
+                      sImageURL: "${snap[index]['imageurl']}",
+                      sSpecialName: "${snap[index]['specialname']}",
+                      sBusiness: "${snap[index]['businessname']}",
+                      sDistance: "${snap[index]['distance']}",
+                      sSpecialDescription:
+                          "${snap[index]['specialdescription']}",
+                      sPhoneNumber: '${snap[index]['phonenumber']}',
+                      sLatitude: '${snap[index]['latitude']}',
+                      sLongitude: '${snap[index]['longitude']}',
+                      bNetworkImage: true,
+                      bShowLocation: true,
+                      iSize: 250,
+                    ),
+                  );
+                },
+              ),
             );
           } else {
             return Center(
